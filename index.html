@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NWA TRUCK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #111;
+      --bg2: #1c1c1c;
+      --bg3: #252525;
+      --orange: #f97316;
+      --orange-dark: #c2570e;
+      --white: #f5f5f5;
+      --gray: #888;
+      --border: #333;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .screen { display: none; width: 100%; max-width: 480px; min-height: 100vh; flex-direction: column; }
+    .screen.active { display: flex; }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--bg2);
+      border-bottom: 3px solid var(--orange);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: 3px;
+      color: var(--orange);
+    }
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--gray);
+      font-size: 1.4rem;
+      cursor: pointer;
+      padding: 4px 8px 4px 0;
+      line-height: 1;
+    }
+    .back-btn:hover { color: var(--white); }
+
+    /* ── HOME ── */
+    #screen-home {
+      background: #0d0d0d;
+      position: relative;
+    }
+    #screen-home .home-brand {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 32px;
+      gap: 0;
+      text-align: center;
+    }
+    #screen-home .home-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 3.6rem;
+      letter-spacing: 8px;
+      color: var(--white);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+    #screen-home .home-logo span {
+      color: var(--orange);
+    }
+    #screen-home .home-rule {
+      width: 48px;
+      height: 3px;
+      background: var(--orange);
+      margin: 22px auto;
+    }
+    #screen-home .home-tagline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 4px;
+      color: #666;
+      text-transform: uppercase;
+    }
+    #screen-home .home-ctas {
+      padding: 0 24px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 20px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--orange);
+      color: #111;
+    }
+    .btn-primary:hover { background: var(--orange-dark); }
+    .btn-secondary {
+      background: var(--bg3);
+      color: var(--white);
+      border: 2px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--orange); color: var(--orange); }
+    .btn-outline {
+      background: transparent;
+      color: var(--orange);
+      border: 2px solid var(--orange);
+    }
+    .btn-outline:hover { background: var(--orange); color: #111; }
+    .btn-sm {
+      padding: 12px 20px;
+      font-size: 1rem;
+      letter-spacing: 2px;
+    }
+
+    /* ── BODY PADDING ── */
+    .body { flex: 1; padding: 24px 20px; display: flex; flex-direction: column; gap: 20px; }
+
+    /* ── FORM ── */
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    .field label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+    .field input, .field textarea {
+      background: var(--bg2);
+      border: 2px solid var(--border);
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      font-size: 1rem;
+      padding: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+      border-radius: 0;
+      -webkit-appearance: none;
+    }
+    .field input:focus, .field textarea:focus { border-color: var(--orange); }
+    .field textarea { resize: vertical; min-height: 80px; }
+
+    /* ── PHOTO UPLOAD ── */
+    .photo-upload {
+      border: 2px dashed var(--border);
+      background: var(--bg2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 40px 20px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .photo-upload:hover { border-color: var(--orange); }
+    .photo-upload .icon { font-size: 2.5rem; }
+    .photo-upload span {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+    .photo-preview {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      border: 2px solid var(--orange);
+      display: none;
+    }
+
+    /* ── PRICE WIDGET ── */
+    .price-widget {
+      background: var(--bg2);
+      border: 2px solid var(--border);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .price-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+    .price-value {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 2rem;
+      color: var(--orange);
+    }
+    .price-adjust {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .adj-btn {
+      background: var(--bg3);
+      border: 2px solid var(--border);
+      color: var(--white);
+      font-size: 1.4rem;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .adj-btn:hover { border-color: var(--orange); color: var(--orange); }
+    .price-note {
+      font-size: 0.8rem;
+      color: var(--gray);
+    }
+
+    /* ── MILES BADGE ── */
+    .miles-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg3);
+      border: 2px solid var(--border);
+      padding: 8px 14px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+      color: var(--gray);
+    }
+    .miles-badge.calculated { border-color: var(--orange); color: var(--white); }
+
+    /* ── JOB CARDS ── */
+    .jobs-list { display: flex; flex-direction: column; gap: 14px; }
+    .job-card {
+      background: var(--bg2);
+      border: 2px solid var(--border);
+      cursor: pointer;
+      transition: border-color 0.15s;
+      overflow: hidden;
+    }
+    .job-card:hover { border-color: var(--orange); }
+    .job-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+    .job-card-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+    .job-card-desc {
+      font-weight: 600;
+      font-size: 1rem;
+      line-height: 1.3;
+    }
+    .job-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .meta-chip {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .meta-chip.price { color: var(--orange); font-size: 1.1rem; }
+    .meta-chip.miles { color: var(--gray); }
+    .meta-chip.time { color: var(--gray); }
+
+    /* ── JOB DETAIL ── */
+    .job-detail-img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      display: block;
+    }
+    .job-detail-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .detail-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+    }
+    .detail-row:last-of-type { border-bottom: none; }
+    .detail-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+    .detail-value {
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .big-price {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 2.8rem;
+      color: var(--orange);
+      line-height: 1;
+    }
+
+    /* ── CONFIRM SCREEN ── */
+    .confirm-box {
+      background: var(--bg2);
+      border: 2px solid var(--orange);
+      padding: 28px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+    }
+    .confirm-icon { font-size: 3rem; }
+    .confirm-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.6rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .confirm-sub { color: var(--gray); font-size: 0.95rem; line-height: 1.5; }
+    .phone-reveal {
+      background: var(--bg3);
+      border: 2px solid var(--border);
+      padding: 16px 24px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: 3px;
+      color: var(--white);
+      width: 100%;
+      text-align: center;
+    }
+
+    /* ── STEP INDICATOR ── */
+    .step-indicator {
+      display: flex;
+      gap: 6px;
+      padding: 14px 20px 0;
+    }
+    .step-dot {
+      height: 4px;
+      flex: 1;
+      background: var(--border);
+    }
+    .step-dot.active { background: var(--orange); }
+
+    /* ── SECTION TITLE ── */
+    .section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.3rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* ── FOOTER ── */
+    .footer-pad { padding-bottom: 32px; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     HOME
+══════════════════════════════════════════ -->
+<div id="screen-home" class="screen active">
+  <div class="home-brand">
+    <div class="home-logo">NWA <span>TRUCK</span></div>
+    <div class="home-rule"></div>
+    <div class="home-tagline">1 truck &nbsp;+&nbsp; 1 hand</div>
+  </div>
+  <div class="home-ctas">
+    <button class="btn btn-primary" onclick="show('screen-post-1')">I NEED HELP</button>
+    <button class="btn btn-secondary" onclick="show('screen-browse')">I CAN HELP</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     POST — STEP 1: PHOTO + DESCRIPTION
+══════════════════════════════════════════ -->
+<div id="screen-post-1" class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="show('screen-home')">&#8592;</button>
+    <span class="logo">NWA TRUCK</span>
+  </div>
+  <div class="step-indicator">
+    <div class="step-dot active"></div>
+    <div class="step-dot"></div>
+    <div class="step-dot"></div>
+  </div>
+  <div class="body">
+    <div class="section-title">What needs moving?</div>
+    <div class="field">
+      <label>Photo of the load</label>
+      <div class="photo-upload" onclick="triggerPhoto()">
+        <div class="icon">📷</div>
+        <span>Tap to add a photo</span>
+      </div>
+      <img id="photo-preview" class="photo-preview" alt="Preview" />
+      <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="handlePhoto(event)" />
+    </div>
+    <div class="field">
+      <label>Describe the load</label>
+      <textarea id="post-desc" placeholder="Old couch, two dressers, some boxes..."></textarea>
+    </div>
+  </div>
+  <div style="padding: 0 20px 32px;">
+    <button class="btn btn-primary" onclick="show('screen-post-2')">NEXT</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     POST — STEP 2: ADDRESSES
+══════════════════════════════════════════ -->
+<div id="screen-post-2" class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="show('screen-post-1')">&#8592;</button>
+    <span class="logo">NWA TRUCK</span>
+  </div>
+  <div class="step-indicator">
+    <div class="step-dot active"></div>
+    <div class="step-dot active"></div>
+    <div class="step-dot"></div>
+  </div>
+  <div class="body">
+    <div class="section-title">Where's it going?</div>
+    <div class="field">
+      <label>Pickup Address</label>
+      <input type="text" id="pickup-addr" placeholder="123 Main St, Bentonville AR" />
+    </div>
+    <div class="field">
+      <label>Dropoff Address</label>
+      <input type="text" id="dropoff-addr" placeholder="456 Oak Ave, Rogers AR" />
+    </div>
+    <div id="miles-badge" class="miles-badge">
+      <span>📍</span> <span id="miles-text">Enter both addresses to see distance</span>
+    </div>
+    <div class="field">
+      <label>When do you need it?</label>
+      <input type="datetime-local" id="post-when" />
+    </div>
+  </div>
+  <div style="padding: 0 20px 32px;">
+    <button class="btn btn-primary" onclick="calcMilesAndNext()">NEXT</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     POST — STEP 3: PRICE
+══════════════════════════════════════════ -->
+<div id="screen-post-3" class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="show('screen-post-2')">&#8592;</button>
+    <span class="logo">NWA TRUCK</span>
+  </div>
+  <div class="step-indicator">
+    <div class="step-dot active"></div>
+    <div class="step-dot active"></div>
+    <div class="step-dot active"></div>
+  </div>
+  <div class="body">
+    <div class="section-title">Set your price</div>
+    <div class="price-widget">
+      <div class="price-row">
+        <span class="price-label">Suggested price</span>
+        <span class="price-value" id="price-display">$45</span>
+      </div>
+      <div class="price-adjust">
+        <button class="adj-btn" onclick="adjustPrice(-5)">−</button>
+        <span class="price-note">Adjust up or down. Driver sees this before claiming.</span>
+        <button class="adj-btn" onclick="adjustPrice(5)">+</button>
+      </div>
+      <div class="price-row">
+        <span class="price-label">Based on</span>
+        <span id="price-miles-note" style="color:var(--gray);font-size:0.9rem;">— miles</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>Your Phone Number</label>
+      <input type="tel" id="post-phone" placeholder="(555) 867-5309" />
+    </div>
+  </div>
+  <div style="padding: 0 20px 32px;">
+    <button class="btn btn-primary" onclick="show('screen-post-confirm')">POST IT</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     POST — CONFIRM
+══════════════════════════════════════════ -->
+<div id="screen-post-confirm" class="screen">
+  <div class="header"><span class="logo">NWA TRUCK</span></div>
+  <div class="body" style="justify-content: center; align-items: center; text-align: center;">
+    <div class="confirm-box">
+      <div class="confirm-icon">✅</div>
+      <div class="confirm-title">Job Posted</div>
+      <div class="confirm-sub">Drivers near you will see your job. When someone claims it, you'll get a text with their number.</div>
+    </div>
+    <button class="btn btn-outline btn-sm" style="margin-top:24px;" onclick="show('screen-home')">BACK TO HOME</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     BROWSE JOBS
+══════════════════════════════════════════ -->
+<div id="screen-browse" class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="show('screen-home')">&#8592;</button>
+    <span class="logo">NWA TRUCK</span>
+  </div>
+  <div class="body">
+    <div class="section-title">Open Jobs Near You</div>
+    <div class="jobs-list">
+
+      <div class="job-card" onclick="show('screen-job-1')">
+        <img src="https://images.unsplash.com/photo-1663625318264-695d2d04f11a?w=600&q=90&fit=crop&auto=format" alt="Couch and boxes" />
+        <div class="job-card-body">
+          <div class="job-card-desc">Couch, two dressers, boxes — moving out of apartment</div>
+          <div class="job-card-meta">
+            <span class="meta-chip price">$65</span>
+            <span class="meta-chip miles">📍 6.2 mi</span>
+            <span class="meta-chip time">⏰ Today 2pm</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="job-card" onclick="show('screen-job-2')">
+        <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=90&fit=crop&auto=format" alt="Mattress" />
+        <div class="job-card-body">
+          <div class="job-card-desc">King bed frame and mattress, nightstand</div>
+          <div class="job-card-meta">
+            <span class="meta-chip price">$40</span>
+            <span class="meta-chip miles">📍 3.8 mi</span>
+            <span class="meta-chip time">⏰ Sat 10am</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="job-card" onclick="show('screen-job-3')">
+        <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=90&fit=crop&auto=format" alt="Lumber" />
+        <div class="job-card-body">
+          <div class="job-card-desc">10 sheets of plywood and some 2x4s from Home Depot</div>
+          <div class="job-card-meta">
+            <span class="meta-chip price">$30</span>
+            <span class="meta-chip miles">📍 1.4 mi</span>
+            <span class="meta-chip time">⏰ Tomorrow noon</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="footer-pad"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     JOB DETAIL 1
+══════════════════════════════════════════ -->
+<div id="screen-job-1" class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="show('screen-browse')">&#8592;</button>
+    <span class="logo">NWA TRUCK</span>
+  </div>
+  <img class="job-detail-img" src="https://images.unsplash.com/photo-1663625318264-695d2d04f11a?w=800&q=90&fit=crop&auto=format" alt="Load" />
+  <div class="job-detail-body">
+    <div class="detail-row">
+      <span class="detail-label">Load</span>
+      <span class="detail-value">Couch, two dressers, boxes — moving out of apartment</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Pickup</span>
+      <span class="detail-value">312 SW A St, Bentonville AR</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Dropoff</span>
+      <span class="detail-value">88 W Walnut St, Rogers AR</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Distance</span>
+      <span class="detail-value">6.2 miles</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">When</span>
+      <span class="detail-value">Today at 2:00 PM</span>
+    </div>
+    <div class="detail-row" style="border:none;">
+      <span class="detail-label">Pay</span>
+      <span class="big-price">$65</span>
+    </div>
+  </div>
+  <div style="padding: 0 20px 32px;">
+    <button class="btn btn-primary" onclick="show('screen-claimed')">CLAIM THIS JOB</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     JOB DETAIL 2
+══════════════════════════════════════════ -->
+<div id="screen-job-2" class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="show('screen-browse')">&#8592;</button>
+    <span class="logo">NWA TRUCK</span>
+  </div>
+  <img class="job-detail-img" src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=90&fit=crop&auto=format" alt="Load" />
+  <div class="job-detail-body">
+    <div class="detail-row">
+      <span class="detail-label">Load</span>
+      <span class="detail-value">King bed frame and mattress, nightstand</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Pickup</span>
+      <span class="detail-value">1400 SE 8th St, Bentonville AR</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Dropoff</span>
+      <span class="detail-value">910 N 2nd St, Rogers AR</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Distance</span>
+      <span class="detail-value">3.8 miles</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">When</span>
+      <span class="detail-value">Saturday at 10:00 AM</span>
+    </div>
+    <div class="detail-row" style="border:none;">
+      <span class="detail-label">Pay</span>
+      <span class="big-price">$40</span>
+    </div>
+  </div>
+  <div style="padding: 0 20px 32px;">
+    <button class="btn btn-primary" onclick="show('screen-claimed')">CLAIM THIS JOB</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     JOB DETAIL 3
+══════════════════════════════════════════ -->
+<div id="screen-job-3" class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="show('screen-browse')">&#8592;</button>
+    <span class="logo">NWA TRUCK</span>
+  </div>
+  <img class="job-detail-img" src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=90&fit=crop&auto=format" alt="Load" />
+  <div class="job-detail-body">
+    <div class="detail-row">
+      <span class="detail-label">Load</span>
+      <span class="detail-value">10 sheets of plywood and some 2x4s from Home Depot</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Pickup</span>
+      <span class="detail-value">1001 SE Moberly Ln, Bentonville AR</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Dropoff</span>
+      <span class="detail-value">204 NE 3rd St, Bentonville AR</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Distance</span>
+      <span class="detail-value">1.4 miles</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">When</span>
+      <span class="detail-value">Tomorrow at 12:00 PM</span>
+    </div>
+    <div class="detail-row" style="border:none;">
+      <span class="detail-label">Pay</span>
+      <span class="big-price">$30</span>
+    </div>
+  </div>
+  <div style="padding: 0 20px 32px;">
+    <button class="btn btn-primary" onclick="show('screen-claimed')">CLAIM THIS JOB</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     CLAIMED
+══════════════════════════════════════════ -->
+<div id="screen-claimed" class="screen">
+  <div class="header"><span class="logo">NWA TRUCK</span></div>
+  <div class="body" style="justify-content: center; align-items: center; text-align: center; gap: 24px;">
+    <div class="confirm-box">
+      <div class="confirm-icon">🤝</div>
+      <div class="confirm-title">Job Claimed</div>
+      <div class="confirm-sub">You're locked in. Here's the poster's number — text them to coordinate pickup time.</div>
+      <div class="phone-reveal">(479) 555-0182</div>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="show('screen-browse')">BACK TO JOBS</button>
+  </div>
+</div>
+
+<script>
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function triggerPhoto() {
+    document.getElementById('photo-input').click();
+  }
+
+  function handlePhoto(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const preview = document.getElementById('photo-preview');
+      preview.src = ev.target.result;
+      preview.style.display = 'block';
+      document.querySelector('.photo-upload').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  let currentPrice = 45;
+
+  function calcMilesAndNext() {
+    const pickup = document.getElementById('pickup-addr').value.trim();
+    const dropoff = document.getElementById('dropoff-addr').value.trim();
+
+    // Mock mile calculation — in production this hits a geocoding API
+    let miles = 5.0;
+    if (pickup && dropoff) {
+      // fake deterministic calc based on string length difference
+      miles = Math.max(1, ((pickup.length + dropoff.length) % 18) + 2);
+      miles = Math.round(miles * 10) / 10;
+    }
+
+    const base = 20;
+    const perMile = 3;
+    currentPrice = Math.round((base + miles * perMile) / 5) * 5;
+
+    document.getElementById('price-display').textContent = '$' + currentPrice;
+    document.getElementById('price-miles-note').textContent = miles + ' miles · $20 base + $3/mi';
+
+    const badge = document.getElementById('miles-badge');
+    document.getElementById('miles-text').textContent = miles + ' miles';
+    badge.classList.add('calculated');
+
+    show('screen-post-3');
+  }
+
+  function adjustPrice(delta) {
+    currentPrice = Math.max(10, currentPrice + delta);
+    document.getElementById('price-display').textContent = '$' + currentPrice;
+  }
+</script>
+</body>
+</html>
