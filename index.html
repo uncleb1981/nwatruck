@@ -330,6 +330,14 @@
       font-size: 1rem;
       line-height: 1.3;
     }
+    .job-card-route {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+      color: var(--orange);
+      text-transform: uppercase;
+    }
     .job-card-meta {
       display: flex;
       align-items: center;
@@ -553,6 +561,7 @@
     <div class="home-logo">NWA <span>TRUCK</span></div>
     <div class="home-rule"></div>
     <div class="home-tagline">1 truck &nbsp;+&nbsp; 1 helper</div>
+    <div style="font-family:'Barlow',sans-serif; font-size:0.85rem; color:var(--gray); letter-spacing:2px; text-transform:uppercase; margin-top:10px;">Uber &nbsp;·&nbsp; Truck &nbsp;·&nbsp; Person</div>
     <div style="height: 36px;"></div>
     <button class="btn btn-primary" style="width:100%;" onclick="show('screen-post-1')">I NEED HELP</button>
     <div style="height: 12px;"></div>
@@ -786,6 +795,7 @@
       <div class="confirm-sub">Drivers near you will see your job. When someone claims it, you'll get a text with their number.</div>
     </div>
     <button class="btn btn-outline btn-sm" style="margin-top:24px;" onclick="show('screen-home')">BACK TO HOME</button>
+    <button class="btn btn-secondary btn-sm" style="margin-top:8px;" onclick="repostJob()">Deal fell through? Repost it</button>
   </div>
 </div>
 
@@ -840,7 +850,7 @@
     </div>
   </div>
   <div style="padding: 0 20px 32px;">
-    <button class="btn btn-primary" onclick="show('screen-claimed')">CLAIM THIS JOB</button>
+    <button class="btn btn-primary" onclick="claimJob()">CLAIM THIS JOB</button>
   </div>
 </div>
 
@@ -854,7 +864,8 @@
       <div class="confirm-icon" style="font-size:2.5rem; color:var(--orange);">✓</div>
       <div class="confirm-title">Job Claimed</div>
       <div class="confirm-sub">You're locked in. Here's the poster's number — text them to coordinate pickup time.</div>
-      <div class="phone-reveal">(479) 555-0182</div>
+      <a id="phone-reveal-link" class="phone-reveal" href="sms:" style="text-decoration:none; display:block;"></a>
+      <div style="font-size:0.8rem; color:var(--gray); margin-top:6px;">Tap to send a text</div>
     </div>
     <button class="btn btn-outline btn-sm" onclick="show('screen-browse')">BACK TO JOBS</button>
   </div>
@@ -907,6 +918,7 @@
         ${job.photo ? `<img src="${job.photo}" alt="Load" />` : ''}
         <div class="job-card-body">
           <div class="job-card-desc">${job.desc}</div>
+          <div class="job-card-route">${job.pickup} &rarr; ${job.dropoff}</div>
           <div class="job-card-meta">
             <span class="meta-chip price">$${job.price}</span>
             <span class="meta-chip miles">${job.miles} mi</span>
@@ -927,6 +939,7 @@
     document.getElementById('detail-when').textContent = job.when;
     document.getElementById('detail-price').textContent = '$' + job.price;
     window._claimPhone = job.phone;
+    window._currentJob = job;
     show('screen-job-detail');
   }
 
@@ -937,14 +950,16 @@
     const dropoff = document.getElementById('dropoff-city').value;
     const when    = selectedWhen;
     const phone   = document.getElementById('post-phone').value.trim();
-    const photo   = document.getElementById('photo-preview').src || '';
+    const photoEl = document.getElementById('photo-preview');
+    const photo   = (photoEl && photoEl.src && photoEl.src.startsWith('data:')) ? photoEl.src : '';
 
-    if (!desc || !pickup || !dropoff || !when || !phone) {
-      alert('Please fill in all fields before posting.');
-      return;
-    }
+    if (!desc)  { alert('Please describe the load.'); return; }
+    if (!pickup || !dropoff) { alert('Please select pickup and dropoff cities.'); return; }
+    if (!when)  { alert('Please select when you need help — Today, Tomorrow, or This Weekend.'); return; }
+    if (!phone) { alert('Please add your phone number.'); return; }
 
     const job = {
+      id: Date.now(),
       desc, pickup, dropoff, phone,
       miles: currentMiles || 0,
       price: currentPrice,
@@ -955,6 +970,7 @@
     const saved = loadSavedJobs();
     saved.push(job);
     localStorage.setItem('nwatruck_jobs', JSON.stringify(saved));
+    window._lastPostedJob = job;
 
     // ── fire ntfy notification to all helpers ──
     fetch('https://ntfy.sh/nwatruck', {
@@ -979,7 +995,9 @@
     window.scrollTo(0, 0);
     if (id === 'screen-browse') renderJobs();
     if (id === 'screen-claimed' && window._claimPhone) {
-      document.querySelector('.phone-reveal').textContent = window._claimPhone;
+      const el = document.getElementById('phone-reveal-link');
+      el.textContent = window._claimPhone;
+      el.href = 'sms:' + window._claimPhone.replace(/\D/g, '');
     }
   }
 
@@ -1024,11 +1042,33 @@
     return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
   }
 
+  let currentPrice = 20;
+  let currentMiles = 0;
   let selectedWhen = '';
   function selectWhen(btn, value) {
     document.querySelectorAll('.when-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     selectedWhen = value;
+  }
+
+  function claimJob() {
+    const job = window._currentJob;
+    if (job && job.id) {
+      const saved = loadSavedJobs().filter(j => j.id !== job.id);
+      localStorage.setItem('nwatruck_jobs', JSON.stringify(saved));
+    }
+    window._claimedJob = job;
+    show('screen-claimed');
+  }
+
+  function repostJob() {
+    if (window._lastPostedJob) {
+      const job = { ...window._lastPostedJob, id: Date.now() };
+      const saved = loadSavedJobs();
+      saved.push(job);
+      localStorage.setItem('nwatruck_jobs', JSON.stringify(saved));
+    }
+    show('screen-post-confirm');
   }
 
   function calcCityDistance() {
