@@ -9,14 +9,14 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #111;
-      --bg2: #1c1c1c;
-      --bg3: #252525;
-      --orange: #f97316;
-      --orange-dark: #c2570e;
-      --white: #f5f5f5;
-      --gray: #888;
-      --border: #333;
+      --bg: #ffffff;
+      --bg2: #f0f5f0;
+      --bg3: #e2ede2;
+      --orange: #3d6b34;
+      --orange-dark: #2e5228;
+      --white: #1a1a1a;
+      --gray: #5a6e56;
+      --border: #c4d8c0;
     }
 
     body {
@@ -61,7 +61,7 @@
 
     /* ── HOME ── */
     #screen-home {
-      background: #0d0d0d;
+      background: #ffffff;
       position: relative;
     }
     #screen-home .home-brand {
@@ -90,14 +90,14 @@
       width: 48px;
       height: 3px;
       background: var(--orange);
-      margin: 22px auto;
+      margin: 16px auto 14px;
     }
     #screen-home .home-tagline {
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 700;
-      font-size: 1.05rem;
+      font-size: 1.4rem;
       letter-spacing: 4px;
-      color: #666;
+      color: var(--white);
       text-transform: uppercase;
     }
     #screen-home .home-ctas {
@@ -124,7 +124,7 @@
     .btn:active { transform: scale(0.98); }
     .btn-primary {
       background: var(--orange);
-      color: #111;
+      color: #ffffff;
     }
     .btn-primary:hover { background: var(--orange-dark); }
     .btn-secondary {
@@ -138,7 +138,7 @@
       color: var(--orange);
       border: 2px solid var(--orange);
     }
-    .btn-outline:hover { background: var(--orange); color: #111; }
+    .btn-outline:hover { background: var(--orange); color: #ffffff; }
     .btn-sm {
       padding: 12px 20px;
       font-size: 1rem;
@@ -158,7 +158,7 @@
       text-transform: uppercase;
       color: var(--gray);
     }
-    .field input, .field textarea {
+    .field input, .field textarea, .field select {
       background: var(--bg2);
       border: 2px solid var(--border);
       color: var(--white);
@@ -169,9 +169,44 @@
       transition: border-color 0.15s;
       border-radius: 0;
       -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
     }
-    .field input:focus, .field textarea:focus { border-color: var(--orange); }
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233d6b34' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--orange); }
     .field textarea { resize: vertical; min-height: 80px; }
+
+    /* ── WHEN OPTIONS ── */
+    .when-options {
+      display: flex;
+      gap: 10px;
+    }
+    .when-btn {
+      flex: 1;
+      padding: 14px 8px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: var(--bg2);
+      border: 2px solid var(--border);
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .when-btn:hover { border-color: var(--orange); color: var(--orange); }
+    .when-btn.selected {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: #ffffff;
+    }
 
     /* ── PHOTO UPLOAD ── */
     .photo-upload {
@@ -359,6 +394,7 @@
       align-items: center;
       gap: 12px;
       text-align: center;
+      width: 100%;
     }
     .confirm-icon { font-size: 3rem; }
     .confirm-title {
@@ -370,14 +406,14 @@
     }
     .confirm-sub { color: var(--gray); font-size: 0.95rem; line-height: 1.5; }
     .phone-reveal {
-      background: var(--bg3);
-      border: 2px solid var(--border);
+      background: var(--orange);
+      border: 2px solid var(--orange);
       padding: 16px 24px;
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 900;
       font-size: 1.5rem;
       letter-spacing: 3px;
-      color: var(--white);
+      color: #ffffff;
       width: 100%;
       text-align: center;
     }
@@ -404,6 +440,105 @@
       text-transform: uppercase;
     }
 
+    /* ── HELPER CHOICE ── */
+    #screen-helper .choice-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 24px 20px;
+      gap: 16px;
+    }
+    .choice-card {
+      background: var(--bg2);
+      border: 2px solid var(--border);
+      padding: 24px 20px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .choice-card:hover { border-color: var(--orange); }
+    .choice-card.featured { border-color: var(--orange); }
+    .choice-badge {
+      display: inline-block;
+      background: var(--orange);
+      color: #111;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      margin-bottom: 4px;
+      width: fit-content;
+    }
+    .choice-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .choice-desc {
+      font-size: 0.9rem;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+    .choice-arrow {
+      color: var(--orange);
+      font-size: 1.2rem;
+      align-self: flex-end;
+      margin-top: 4px;
+    }
+
+    /* ── NTFY SETUP ── */
+    .ntfy-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .ntfy-step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .step-num {
+      background: var(--orange);
+      color: #111;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1rem;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-text { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
+    .step-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .step-sub { font-size: 0.85rem; color: var(--gray); line-height: 1.4; }
+    .topic-pill {
+      display: inline-block;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      color: var(--orange);
+      padding: 6px 14px;
+      margin-top: 6px;
+    }
+
     /* ── FOOTER ── */
     .footer-pad { padding-bottom: 32px; }
   </style>
@@ -417,11 +552,82 @@
   <div class="home-brand">
     <div class="home-logo">NWA <span>TRUCK</span></div>
     <div class="home-rule"></div>
-    <div class="home-tagline">1 truck &nbsp;+&nbsp; 1 hand</div>
+    <div class="home-tagline">1 truck &nbsp;+&nbsp; 1 helper</div>
+    <div style="height: 36px;"></div>
+    <button class="btn btn-primary" style="width:100%;" onclick="show('screen-post-1')">I NEED HELP</button>
+    <div style="height: 12px;"></div>
+    <button class="btn btn-secondary" style="width:100%;" onclick="show('screen-helper')">I CAN HELP</button>
   </div>
-  <div class="home-ctas">
-    <button class="btn btn-primary" onclick="show('screen-post-1')">I NEED HELP</button>
-    <button class="btn btn-secondary" onclick="show('screen-browse')">I CAN HELP</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HELPER CHOICE
+══════════════════════════════════════════ -->
+<div id="screen-helper" class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="show('screen-home')">&#8592;</button>
+    <span class="logo">NWA TRUCK</span>
+  </div>
+  <div class="choice-body">
+    <div class="section-title" style="margin-bottom:8px;">How do you want to find jobs?</div>
+
+    <div class="choice-card featured" onclick="show('screen-ntfy')">
+      <div class="choice-badge">Recommended</div>
+      <div class="choice-title">Get Notified</div>
+      <div class="choice-desc">Get a push notification the moment a new job goes live near you. Free app, takes 2 minutes to set up.</div>
+      <div class="choice-arrow">&#8594;</div>
+    </div>
+
+    <div class="choice-card" onclick="show('screen-browse')">
+      <div class="choice-title">Browse Jobs</div>
+      <div class="choice-desc">Check open jobs anytime. Bookmark this page and come back whenever you want to pick up a haul.</div>
+      <div class="choice-arrow">&#8594;</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     NTFY SETUP
+══════════════════════════════════════════ -->
+<div id="screen-ntfy" class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="show('screen-helper')">&#8592;</button>
+    <span class="logo">NWA TRUCK</span>
+  </div>
+  <div class="body">
+    <div class="section-title">Set Up Notifications</div>
+    <div class="ntfy-steps">
+
+      <div class="ntfy-step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <div class="step-label">Download ntfy</div>
+          <div class="step-sub">Free app on iPhone and Android. Search "ntfy" in the App Store or Google Play.</div>
+        </div>
+      </div>
+
+      <div class="ntfy-step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <div class="step-label">Subscribe to this topic</div>
+          <div class="step-sub">Open ntfy, tap the + button, and enter this topic name exactly:</div>
+          <div class="topic-pill">nwatruck</div>
+        </div>
+      </div>
+
+      <div class="ntfy-step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <div class="step-label">You're in</div>
+          <div class="step-sub">Every time a new job posts, you'll get a notification instantly — even with your phone locked.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div style="padding: 0 20px 32px; display:flex; flex-direction:column; gap:12px;">
+    <button class="btn btn-primary" onclick="show('screen-browse')">BROWSE OPEN JOBS</button>
+    <button class="btn btn-secondary btn-sm" onclick="show('screen-home')">BACK TO HOME</button>
   </div>
 </div>
 
@@ -443,7 +649,7 @@
     <div class="field">
       <label>Photo of the load</label>
       <div class="photo-upload" onclick="triggerPhoto()">
-        <div class="icon">📷</div>
+        <div class="icon" style="font-size:2rem; color:var(--gray);">+</div>
         <span>Tap to add a photo</span>
       </div>
       <img id="photo-preview" class="photo-preview" alt="Preview" />
@@ -475,23 +681,55 @@
   <div class="body">
     <div class="section-title">Where's it going?</div>
     <div class="field">
-      <label>Pickup Address</label>
-      <input type="text" id="pickup-addr" placeholder="123 Main St, Bentonville AR" />
+      <label>Pickup City</label>
+      <select id="pickup-city" onchange="calcCityDistance()">
+        <option value="">Select a city...</option>
+        <option>Bella Vista</option>
+        <option>Bentonville</option>
+        <option>Cave Springs</option>
+        <option>Centerton</option>
+        <option>Elm Springs</option>
+        <option>Fayetteville</option>
+        <option>Highfill</option>
+        <option>Lowell</option>
+        <option>Pea Ridge</option>
+        <option>Rogers</option>
+        <option>Siloam Springs</option>
+        <option>Springdale</option>
+      </select>
     </div>
     <div class="field">
-      <label>Dropoff Address</label>
-      <input type="text" id="dropoff-addr" placeholder="456 Oak Ave, Rogers AR" />
+      <label>Dropoff City</label>
+      <select id="dropoff-city" onchange="calcCityDistance()">
+        <option value="">Select a city...</option>
+        <option>Bella Vista</option>
+        <option>Bentonville</option>
+        <option>Cave Springs</option>
+        <option>Centerton</option>
+        <option>Elm Springs</option>
+        <option>Fayetteville</option>
+        <option>Highfill</option>
+        <option>Lowell</option>
+        <option>Pea Ridge</option>
+        <option>Rogers</option>
+        <option>Siloam Springs</option>
+        <option>Springdale</option>
+      </select>
     </div>
     <div id="miles-badge" class="miles-badge">
-      <span>📍</span> <span id="miles-text">Enter both addresses to see distance</span>
+      <span id="miles-text">Select both cities to see distance</span>
     </div>
     <div class="field">
       <label>When do you need it?</label>
-      <input type="datetime-local" id="post-when" />
+      <div class="when-options">
+        <button class="when-btn" onclick="selectWhen(this, 'Today')">Today</button>
+        <button class="when-btn" onclick="selectWhen(this, 'Tomorrow')">Tomorrow</button>
+        <button class="when-btn" onclick="selectWhen(this, 'This Weekend')">This Weekend</button>
+      </div>
     </div>
   </div>
   <div style="padding: 0 20px 32px;">
-    <button class="btn btn-primary" onclick="calcMilesAndNext()">NEXT</button>
+    <button class="btn btn-primary" onclick="goToPrice()">NEXT</button>
   </div>
 </div>
 
@@ -516,9 +754,9 @@
         <span class="price-value" id="price-display">$45</span>
       </div>
       <div class="price-adjust">
-        <button class="adj-btn" onclick="adjustPrice(-5)">−</button>
+        <button class="adj-btn" onclick="adjustPrice(-10)">−</button>
         <span class="price-note">Adjust up or down. Driver sees this before claiming.</span>
-        <button class="adj-btn" onclick="adjustPrice(5)">+</button>
+        <button class="adj-btn" onclick="adjustPrice(10)">+</button>
       </div>
       <div class="price-row">
         <span class="price-label">Based on</span>
@@ -527,11 +765,12 @@
     </div>
     <div class="field">
       <label>Your Phone Number</label>
-      <input type="tel" id="post-phone" placeholder="(555) 867-5309" />
+      <input type="tel" id="post-phone" placeholder="(479) 555-0000" />
+      <div style="font-size:0.85rem; color:var(--gray); line-height:1.5; margin-top:4px;">Once your job is posted, helpers will reach out directly to your number to claim it. Expect a text soon.</div>
     </div>
   </div>
   <div style="padding: 0 20px 32px;">
-    <button class="btn btn-primary" onclick="show('screen-post-confirm')">POST IT</button>
+    <button class="btn btn-primary" onclick="submitJob()">POST IT</button>
   </div>
 </div>
 
@@ -542,7 +781,7 @@
   <div class="header"><span class="logo">NWA TRUCK</span></div>
   <div class="body" style="justify-content: center; align-items: center; text-align: center;">
     <div class="confirm-box">
-      <div class="confirm-icon">✅</div>
+      <div class="confirm-icon" style="font-size:2.5rem; color:var(--orange);">✓</div>
       <div class="confirm-title">Job Posted</div>
       <div class="confirm-sub">Drivers near you will see your job. When someone claims it, you'll get a text with their number.</div>
     </div>
@@ -559,163 +798,45 @@
     <span class="logo">NWA TRUCK</span>
   </div>
   <div class="body">
-    <div class="section-title">Open Jobs Near You</div>
-    <div class="jobs-list">
-
-      <div class="job-card" onclick="show('screen-job-1')">
-        <img src="https://images.unsplash.com/photo-1663625318264-695d2d04f11a?w=600&q=90&fit=crop&auto=format" alt="Couch and boxes" />
-        <div class="job-card-body">
-          <div class="job-card-desc">Couch, two dressers, boxes — moving out of apartment</div>
-          <div class="job-card-meta">
-            <span class="meta-chip price">$65</span>
-            <span class="meta-chip miles">📍 6.2 mi</span>
-            <span class="meta-chip time">⏰ Today 2pm</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="job-card" onclick="show('screen-job-2')">
-        <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=90&fit=crop&auto=format" alt="Mattress" />
-        <div class="job-card-body">
-          <div class="job-card-desc">King bed frame and mattress, nightstand</div>
-          <div class="job-card-meta">
-            <span class="meta-chip price">$40</span>
-            <span class="meta-chip miles">📍 3.8 mi</span>
-            <span class="meta-chip time">⏰ Sat 10am</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="job-card" onclick="show('screen-job-3')">
-        <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=90&fit=crop&auto=format" alt="Lumber" />
-        <div class="job-card-body">
-          <div class="job-card-desc">10 sheets of plywood and some 2x4s from Home Depot</div>
-          <div class="job-card-meta">
-            <span class="meta-chip price">$30</span>
-            <span class="meta-chip miles">📍 1.4 mi</span>
-            <span class="meta-chip time">⏰ Tomorrow noon</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <div class="section-title">Open Jobs</div>
+    <div id="jobs-list" class="jobs-list"></div>
   </div>
   <div class="footer-pad"></div>
 </div>
 
 <!-- ══════════════════════════════════════════
-     JOB DETAIL 1
+     JOB DETAIL (dynamic)
 ══════════════════════════════════════════ -->
-<div id="screen-job-1" class="screen">
+<div id="screen-job-detail" class="screen">
   <div class="header">
     <button class="back-btn" onclick="show('screen-browse')">&#8592;</button>
     <span class="logo">NWA TRUCK</span>
   </div>
-  <img class="job-detail-img" src="https://images.unsplash.com/photo-1663625318264-695d2d04f11a?w=800&q=90&fit=crop&auto=format" alt="Load" />
+  <img id="detail-photo" class="job-detail-img" src="" alt="Load" />
   <div class="job-detail-body">
     <div class="detail-row">
       <span class="detail-label">Load</span>
-      <span class="detail-value">Couch, two dressers, boxes — moving out of apartment</span>
+      <span id="detail-desc" class="detail-value"></span>
     </div>
     <div class="detail-row">
       <span class="detail-label">Pickup</span>
-      <span class="detail-value">312 SW A St, Bentonville AR</span>
+      <span id="detail-pickup" class="detail-value"></span>
     </div>
     <div class="detail-row">
       <span class="detail-label">Dropoff</span>
-      <span class="detail-value">88 W Walnut St, Rogers AR</span>
+      <span id="detail-dropoff" class="detail-value"></span>
     </div>
     <div class="detail-row">
       <span class="detail-label">Distance</span>
-      <span class="detail-value">6.2 miles</span>
+      <span id="detail-miles" class="detail-value"></span>
     </div>
     <div class="detail-row">
       <span class="detail-label">When</span>
-      <span class="detail-value">Today at 2:00 PM</span>
+      <span id="detail-when" class="detail-value"></span>
     </div>
     <div class="detail-row" style="border:none;">
       <span class="detail-label">Pay</span>
-      <span class="big-price">$65</span>
-    </div>
-  </div>
-  <div style="padding: 0 20px 32px;">
-    <button class="btn btn-primary" onclick="show('screen-claimed')">CLAIM THIS JOB</button>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     JOB DETAIL 2
-══════════════════════════════════════════ -->
-<div id="screen-job-2" class="screen">
-  <div class="header">
-    <button class="back-btn" onclick="show('screen-browse')">&#8592;</button>
-    <span class="logo">NWA TRUCK</span>
-  </div>
-  <img class="job-detail-img" src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=90&fit=crop&auto=format" alt="Load" />
-  <div class="job-detail-body">
-    <div class="detail-row">
-      <span class="detail-label">Load</span>
-      <span class="detail-value">King bed frame and mattress, nightstand</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-label">Pickup</span>
-      <span class="detail-value">1400 SE 8th St, Bentonville AR</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-label">Dropoff</span>
-      <span class="detail-value">910 N 2nd St, Rogers AR</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-label">Distance</span>
-      <span class="detail-value">3.8 miles</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-label">When</span>
-      <span class="detail-value">Saturday at 10:00 AM</span>
-    </div>
-    <div class="detail-row" style="border:none;">
-      <span class="detail-label">Pay</span>
-      <span class="big-price">$40</span>
-    </div>
-  </div>
-  <div style="padding: 0 20px 32px;">
-    <button class="btn btn-primary" onclick="show('screen-claimed')">CLAIM THIS JOB</button>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     JOB DETAIL 3
-══════════════════════════════════════════ -->
-<div id="screen-job-3" class="screen">
-  <div class="header">
-    <button class="back-btn" onclick="show('screen-browse')">&#8592;</button>
-    <span class="logo">NWA TRUCK</span>
-  </div>
-  <img class="job-detail-img" src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=90&fit=crop&auto=format" alt="Load" />
-  <div class="job-detail-body">
-    <div class="detail-row">
-      <span class="detail-label">Load</span>
-      <span class="detail-value">10 sheets of plywood and some 2x4s from Home Depot</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-label">Pickup</span>
-      <span class="detail-value">1001 SE Moberly Ln, Bentonville AR</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-label">Dropoff</span>
-      <span class="detail-value">204 NE 3rd St, Bentonville AR</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-label">Distance</span>
-      <span class="detail-value">1.4 miles</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-label">When</span>
-      <span class="detail-value">Tomorrow at 12:00 PM</span>
-    </div>
-    <div class="detail-row" style="border:none;">
-      <span class="detail-label">Pay</span>
-      <span class="big-price">$30</span>
+      <span id="detail-price" class="big-price"></span>
     </div>
   </div>
   <div style="padding: 0 20px 32px;">
@@ -730,7 +851,7 @@
   <div class="header"><span class="logo">NWA TRUCK</span></div>
   <div class="body" style="justify-content: center; align-items: center; text-align: center; gap: 24px;">
     <div class="confirm-box">
-      <div class="confirm-icon">🤝</div>
+      <div class="confirm-icon" style="font-size:2.5rem; color:var(--orange);">✓</div>
       <div class="confirm-title">Job Claimed</div>
       <div class="confirm-sub">You're locked in. Here's the poster's number — text them to coordinate pickup time.</div>
       <div class="phone-reveal">(479) 555-0182</div>
@@ -740,10 +861,126 @@
 </div>
 
 <script>
+
+  // ══════════════════════════════════════════
+  // JOBS LIST — add your real postings here
+  // Copy a block, fill in the details, save, push to GitHub.
+  // Leave this array empty when there are no open jobs.
+  // ══════════════════════════════════════════
+  const JOBS = [
+    // {
+    //   desc:    "What needs to be moved",
+    //   pickup:  "Pickup address",
+    //   dropoff: "Dropoff address",
+    //   miles:   4.5,
+    //   price:   55,
+    //   when:    "Sat Jun 7 at 10am",
+    //   photo:   "https://link-to-photo.jpg",
+    //   phone:   "(479) 555-0000"
+    // },
+  ];
+
+  // ── load saved jobs from localStorage ──
+  function loadSavedJobs() {
+    try {
+      return JSON.parse(localStorage.getItem('nwatruck_jobs') || '[]');
+    } catch(e) { return []; }
+  }
+
+  function allJobs() {
+    return [...JOBS, ...loadSavedJobs()];
+  }
+
+  function renderJobs() {
+    const jobs = allJobs();
+    const list = document.getElementById('jobs-list');
+    if (jobs.length === 0) {
+      list.innerHTML = `
+        <div style="text-align:center; padding: 48px 0; color: var(--gray);">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:1.1rem; letter-spacing:2px; text-transform:uppercase; color:var(--gray);">No open jobs right now</div>
+          <div style="font-size:0.9rem; margin-top:8px;">Check back soon or set up notifications.</div>
+        </div>`;
+      return;
+    }
+    list.innerHTML = jobs.map((job, i) => `
+      <div class="job-card" onclick="openJob(${i})">
+        ${job.photo ? `<img src="${job.photo}" alt="Load" />` : ''}
+        <div class="job-card-body">
+          <div class="job-card-desc">${job.desc}</div>
+          <div class="job-card-meta">
+            <span class="meta-chip price">$${job.price}</span>
+            <span class="meta-chip miles">${job.miles} mi</span>
+            <span class="meta-chip time">${job.when}</span>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  function openJob(i) {
+    const job = allJobs()[i];
+    document.getElementById('detail-photo').src = job.photo || '';
+    document.getElementById('detail-photo').style.display = job.photo ? 'block' : 'none';
+    document.getElementById('detail-desc').textContent = job.desc;
+    document.getElementById('detail-pickup').textContent = job.pickup;
+    document.getElementById('detail-dropoff').textContent = job.dropoff;
+    document.getElementById('detail-miles').textContent = job.miles + ' miles';
+    document.getElementById('detail-when').textContent = job.when;
+    document.getElementById('detail-price').textContent = '$' + job.price;
+    window._claimPhone = job.phone;
+    show('screen-job-detail');
+  }
+
+  // ── submit a new job from the form ──
+  function submitJob() {
+    const desc    = document.getElementById('post-desc').value.trim();
+    const pickup  = document.getElementById('pickup-city').value;
+    const dropoff = document.getElementById('dropoff-city').value;
+    const when    = selectedWhen;
+    const phone   = document.getElementById('post-phone').value.trim();
+    const photo   = document.getElementById('photo-preview').src || '';
+
+    if (!desc || !pickup || !dropoff || !when || !phone) {
+      alert('Please fill in all fields before posting.');
+      return;
+    }
+
+    const job = {
+      desc, pickup, dropoff, phone,
+      miles: currentMiles || 0,
+      price: currentPrice,
+      when,
+      photo: photo.startsWith('data:') ? photo : ''
+    };
+
+    const saved = loadSavedJobs();
+    saved.push(job);
+    localStorage.setItem('nwatruck_jobs', JSON.stringify(saved));
+
+    // ── fire ntfy notification to all helpers ──
+    fetch('https://ntfy.sh/nwatruck', {
+      method: 'POST',
+      headers: {
+        'Title': 'New NWA Truck Job',
+        'Priority': 'high',
+        'Tags': 'truck'
+      },
+      body: `${job.desc} — ${job.miles} mi — $${job.price} — ${job.when}`
+    }).catch(() => {}); // fail silently if offline
+
+    show('screen-post-confirm');
+  }
+
+  renderJobs();
+
+  // ── navigation ──
   function show(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     window.scrollTo(0, 0);
+    if (id === 'screen-browse') renderJobs();
+    if (id === 'screen-claimed' && window._claimPhone) {
+      document.querySelector('.phone-reveal').textContent = window._claimPhone;
+    }
   }
 
   function triggerPhoto() {
@@ -763,36 +1000,63 @@
     reader.readAsDataURL(file);
   }
 
-  let currentPrice = 45;
+  // ── NWA city coordinates ──
+  const CITIES = {
+    'Bella Vista':    [36.4812, -94.2716],
+    'Bentonville':    [36.3729, -94.2088],
+    'Cave Springs':   [36.2679, -94.2197],
+    'Centerton':      [36.3595, -94.2833],
+    'Elm Springs':    [36.2084, -94.2372],
+    'Fayetteville':   [36.0626, -94.1574],
+    'Highfill':       [36.3018, -94.3694],
+    'Lowell':         [36.2584, -94.1363],
+    'Pea Ridge':      [36.4573, -94.0957],
+    'Rogers':         [36.3320, -94.1185],
+    'Siloam Springs': [36.1882, -94.5405],
+    'Springdale':     [36.1867, -94.1288],
+  };
 
-  function calcMilesAndNext() {
-    const pickup = document.getElementById('pickup-addr').value.trim();
-    const dropoff = document.getElementById('dropoff-addr').value.trim();
+  function haversine(c1, c2) {
+    const R = 3958.8;
+    const dLat = (c2[0] - c1[0]) * Math.PI / 180;
+    const dLon = (c2[1] - c1[1]) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(c1[0]*Math.PI/180) * Math.cos(c2[0]*Math.PI/180) * Math.sin(dLon/2)**2;
+    return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+  }
 
-    // Mock mile calculation — in production this hits a geocoding API
-    let miles = 5.0;
-    if (pickup && dropoff) {
-      // fake deterministic calc based on string length difference
-      miles = Math.max(1, ((pickup.length + dropoff.length) % 18) + 2);
-      miles = Math.round(miles * 10) / 10;
-    }
+  let selectedWhen = '';
+  function selectWhen(btn, value) {
+    document.querySelectorAll('.when-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedWhen = value;
+  }
 
+  function calcCityDistance() {
+    const p = document.getElementById('pickup-city').value;
+    const d = document.getElementById('dropoff-city').value;
+    if (!p || !d) return;
+    const miles = haversine(CITIES[p], CITIES[d]);
+    currentMiles = miles;
+    document.getElementById('miles-text').textContent = miles + ' miles';
+    document.getElementById('miles-badge').classList.add('calculated');
+  }
+
+  function goToPrice() {
+    const p = document.getElementById('pickup-city').value;
+    const d = document.getElementById('dropoff-city').value;
+    if (!p || !d) { alert('Please select both cities.'); return; }
+    calcCityDistance();
     const base = 20;
     const perMile = 3;
-    currentPrice = Math.round((base + miles * perMile) / 5) * 5;
-
+    currentPrice = Math.round((base + currentMiles * perMile) / 10) * 10;
     document.getElementById('price-display').textContent = '$' + currentPrice;
-    document.getElementById('price-miles-note').textContent = miles + ' miles · $20 base + $3/mi';
-
-    const badge = document.getElementById('miles-badge');
-    document.getElementById('miles-text').textContent = miles + ' miles';
-    badge.classList.add('calculated');
-
+    document.getElementById('price-miles-note').textContent = currentMiles + ' miles · $20 base + $3/mi';
     show('screen-post-3');
   }
 
   function adjustPrice(delta) {
     currentPrice = Math.max(10, currentPrice + delta);
+    currentPrice = Math.round(currentPrice / 10) * 10;
     document.getElementById('price-display').textContent = '$' + currentPrice;
   }
 </script>
