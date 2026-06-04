@@ -861,13 +861,13 @@
   <div class="header"><span class="logo">NWA TRUCK</span></div>
   <div class="body" style="justify-content: center; align-items: center; text-align: center; gap: 24px;">
     <div class="confirm-box">
-      <div class="confirm-icon" style="font-size:2.5rem; color:var(--orange);">✓</div>
-      <div class="confirm-title">Job Claimed</div>
-      <div class="confirm-sub">You're locked in. Here's the poster's number — text them to coordinate pickup time.</div>
-      <a id="phone-reveal-link" class="phone-reveal" href="sms:" style="text-decoration:none; display:block;"></a>
-      <div style="font-size:0.8rem; color:var(--gray); margin-top:6px;">Tap to send a text</div>
+      <div class="confirm-title" style="font-size:1.1rem; letter-spacing:1px;">You got the job.</div>
+      <div class="confirm-title" style="font-size:1.1rem; letter-spacing:1px;">Now text the poster.</div>
+      <div class="confirm-sub" style="margin-top:4px;">The job isn't locked in until you reach out. Tap below to text them now and confirm pickup details.</div>
+      <a id="phone-reveal-link" class="phone-reveal" href="sms:" style="text-decoration:none; display:block; margin-top:8px;"></a>
     </div>
-    <button class="btn btn-outline btn-sm" onclick="show('screen-browse')">BACK TO JOBS</button>
+    <div style="font-size:0.8rem; color:var(--gray);">Once you've connected, the job is yours.</div>
+    <button class="btn btn-outline btn-sm" onclick="show('screen-browse')" style="opacity:0.5;">Back to jobs</button>
   </div>
 </div>
 
@@ -894,7 +894,11 @@
   // ── load saved jobs from localStorage ──
   function loadSavedJobs() {
     try {
-      return JSON.parse(localStorage.getItem('nwatruck_jobs') || '[]');
+      const jobs = JSON.parse(localStorage.getItem('nwatruck_jobs') || '[]');
+      // strip any old jobs that were saved without an id
+      const clean = jobs.filter(j => j.id);
+      if (clean.length !== jobs.length) localStorage.setItem('nwatruck_jobs', JSON.stringify(clean));
+      return clean;
     } catch(e) { return []; }
   }
 
@@ -1053,8 +1057,12 @@
 
   function claimJob() {
     const job = window._currentJob;
-    if (job && job.id) {
-      const saved = loadSavedJobs().filter(j => j.id !== job.id);
+    if (job) {
+      const saved = loadSavedJobs().filter(j => {
+        if (job.id && j.id) return j.id !== job.id;
+        // fallback: match by description + pickup for old jobs without id
+        return !(j.desc === job.desc && j.pickup === job.pickup);
+      });
       localStorage.setItem('nwatruck_jobs', JSON.stringify(saved));
     }
     window._claimedJob = job;
