@@ -793,10 +793,9 @@
     <div class="confirm-box">
       <div class="confirm-icon" style="font-size:2.5rem; color:var(--orange);">✓</div>
       <div class="confirm-title">Job Posted</div>
-      <div class="confirm-sub">Drivers near you will see your job. When someone claims it, you'll get a text with their number.</div>
+      <div class="confirm-sub">Helpers near you will see your job and reach out by text to claim it. If a deal falls through and the post is gone, just post again.</div>
     </div>
     <button class="btn btn-outline btn-sm" style="margin-top:24px;" onclick="show('screen-home')">BACK TO HOME</button>
-    <button class="btn btn-secondary btn-sm" style="margin-top:8px;" onclick="repostJob()">Deal fell through? Repost it</button>
   </div>
 </div>
 
@@ -865,7 +864,7 @@
       <div class="confirm-title" style="font-size:1.1rem; letter-spacing:1px;">You got the job.</div>
       <div class="confirm-title" style="font-size:1.1rem; letter-spacing:1px;">Now text the poster.</div>
       <div class="confirm-sub" style="margin-top:4px;">The job isn't locked in until you reach out. Tap below to text them now and confirm pickup details.</div>
-      <a id="phone-reveal-link" class="phone-reveal" href="sms:" style="text-decoration:none; display:block; margin-top:8px;"></a>
+      <a id="phone-reveal-link" class="phone-reveal" href="sms:" style="text-decoration:none; display:block; margin-top:8px;" onclick="confirmClaim()"></a>
     </div>
     <div style="font-size:0.8rem; color:var(--gray);">Once you've connected, the job is yours.</div>
     <button class="btn btn-outline btn-sm" onclick="show('screen-browse')" style="opacity:0.5;">Back to jobs</button>
@@ -884,12 +883,17 @@
   async function loadJobs() {
     try {
       const res = await fetch(`${BIN_URL}/latest`, {
-        headers: { 'X-Master-Key': BIN_KEY }
+        headers: { 'X-Master-Key': BIN_KEY, 'X-Bin-Meta': 'false' }
       });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      cachedJobs = data.record.jobs || [];
+      cachedJobs = (data.jobs) || (data.record && data.record.jobs) || [];
       return cachedJobs;
-    } catch(e) { cachedJobs = []; return []; }
+    } catch(e) {
+      console.error('loadJobs failed:', e);
+      cachedJobs = [];
+      return null; // null signals an error
+    }
   }
 
   async function saveJobs(jobs) {
@@ -905,6 +909,15 @@
     const list = document.getElementById('jobs-list');
     list.innerHTML = `<div style="text-align:center;padding:48px 0;color:var(--gray);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase;">Loading...</div>`;
     const jobs = await loadJobs();
+    if (jobs === null) {
+      list.innerHTML = `
+        <div style="text-align:center; padding:48px 0; color:var(--gray);">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.1rem;letter-spacing:2px;text-transform:uppercase;color:#c1440e;">Couldn't load jobs</div>
+          <div style="font-size:0.9rem;margin-top:8px;">Check your connection and try again.</div>
+          <button onclick="renderJobs()" style="margin-top:16px;padding:10px 24px;background:var(--orange);color:#fff;border:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;">RETRY</button>
+        </div>`;
+      return;
+    }
     if (jobs.length === 0) {
       list.innerHTML = `
         <div style="text-align:center; padding:48px 0; color:var(--gray);">
@@ -971,7 +984,7 @@
         photo
       };
 
-      const jobs = await loadJobs();
+      const jobs = (await loadJobs()) || [];
       jobs.push(job);
       await saveJobs(jobs);
       window._lastPostedJob = job;
@@ -991,16 +1004,20 @@
     }
   }
 
-  // ── claim a job ──
-  async function claimJob() {
-    const job = window._currentJob;
+  // ── claim a job — just shows the screen, job stays live until they text ──
+  function claimJob() {
+    window._claimedJob = window._currentJob;
+    show('screen-claimed');
+  }
+
+  // ── called when helper taps the phone number to text ──
+  async function confirmClaim() {
+    const job = window._claimedJob;
     if (job) {
-      const jobs = await loadJobs();
+      const jobs = (await loadJobs()) || [];
       const filtered = jobs.filter(j => j.id !== job.id);
       await saveJobs(filtered);
     }
-    window._claimedJob = job;
-    show('screen-claimed');
   }
 
   renderJobs();
