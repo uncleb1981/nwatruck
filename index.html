@@ -873,6 +873,22 @@
 
 <script>
 
+  // ── imgbb config ──
+  const IMGBB_KEY = '7ee5de47316b4ee1290264fe8b052fdc';
+
+  async function uploadPhoto(dataUri) {
+    if (!dataUri || !dataUri.startsWith('data:')) return '';
+    try {
+      const base64 = dataUri.split(',')[1];
+      const form = new FormData();
+      form.append('key', IMGBB_KEY);
+      form.append('image', base64);
+      const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: form });
+      const data = await res.json();
+      return data.success ? data.data.url : '';
+    } catch(e) { return ''; }
+  }
+
   // ── JSONBin config ──
   const BIN_ID  = '6a23399bf5f4af5e29bfe69b';
   const BIN_KEY = '$2a$10$5G9beynezH5s88gx5ag9heY1Kl6UyCQsL16xMt11ChzhaCK1jxhW6';
@@ -975,13 +991,16 @@
     btn.textContent = 'POSTING...'; btn.disabled = true;
 
     try {
+      // upload photo to imgbb, store URL instead of data URI
+      const photoUrl = await uploadPhoto(photo);
+
       const job = {
         id: Date.now(),
         desc, pickup, dropoff, phone,
         miles: currentMiles || 0,
         price: currentPrice,
         when,
-        photo
+        photo: photoUrl
       };
 
       const jobs = (await loadJobs()) || [];
