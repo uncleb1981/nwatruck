@@ -728,6 +728,7 @@
     <div id="miles-badge" class="miles-badge">
       <span id="miles-text">Select both cities to see distance</span>
     </div>
+    <div id="same-city-note" style="display:none; font-size:0.85rem; color:var(--gray); line-height:1.5;">Same city selected — suggested price will include the base fee only, no mileage added.</div>
     <div class="field">
       <label>When do you need it?</label>
       <div class="when-options">
@@ -873,47 +874,42 @@
 
 <script>
 
-  // ══════════════════════════════════════════
-  // JOBS LIST — add your real postings here
-  // Copy a block, fill in the details, save, push to GitHub.
-  // Leave this array empty when there are no open jobs.
-  // ══════════════════════════════════════════
-  const JOBS = [
-    // {
-    //   desc:    "What needs to be moved",
-    //   pickup:  "Pickup address",
-    //   dropoff: "Dropoff address",
-    //   miles:   4.5,
-    //   price:   55,
-    //   when:    "Sat Jun 7 at 10am",
-    //   photo:   "https://link-to-photo.jpg",
-    //   phone:   "(479) 555-0000"
-    // },
-  ];
+  // ── JSONBin config ──
+  const BIN_ID  = '6a23399bf5f4af5e29bfe69b';
+  const BIN_KEY = '$2a$10$5G9beynezH5s88gx5ag9heY1Kl6UyCQsL16xMt11ChzhaCK1jxhW6';
+  const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
-  // ── load saved jobs from localStorage ──
-  function loadSavedJobs() {
+  let cachedJobs = [];
+
+  async function loadJobs() {
     try {
-      const jobs = JSON.parse(localStorage.getItem('nwatruck_jobs') || '[]');
-      // strip any old jobs that were saved without an id
-      const clean = jobs.filter(j => j.id);
-      if (clean.length !== jobs.length) localStorage.setItem('nwatruck_jobs', JSON.stringify(clean));
-      return clean;
-    } catch(e) { return []; }
+      const res = await fetch(`${BIN_URL}/latest`, {
+        headers: { 'X-Master-Key': BIN_KEY }
+      });
+      const data = await res.json();
+      cachedJobs = data.record.jobs || [];
+      return cachedJobs;
+    } catch(e) { cachedJobs = []; return []; }
   }
 
-  function allJobs() {
-    return [...JOBS, ...loadSavedJobs()];
+  async function saveJobs(jobs) {
+    await fetch(BIN_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': BIN_KEY },
+      body: JSON.stringify({ jobs })
+    });
+    cachedJobs = jobs;
   }
 
-  function renderJobs() {
-    const jobs = allJobs();
+  async function renderJobs() {
     const list = document.getElementById('jobs-list');
+    list.innerHTML = `<div style="text-align:center;padding:48px 0;color:var(--gray);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase;">Loading...</div>`;
+    const jobs = await loadJobs();
     if (jobs.length === 0) {
       list.innerHTML = `
-        <div style="text-align:center; padding: 48px 0; color: var(--gray);">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:1.1rem; letter-spacing:2px; text-transform:uppercase; color:var(--gray);">No open jobs right now</div>
-          <div style="font-size:0.9rem; margin-top:8px;">Check back soon or set up notifications.</div>
+        <div style="text-align:center; padding:48px 0; color:var(--gray);">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.1rem;letter-spacing:2px;text-transform:uppercase;">No open jobs right now</div>
+          <div style="font-size:0.9rem;margin-top:8px;">Check back soon or set up notifications.</div>
         </div>`;
       return;
     }
@@ -933,7 +929,7 @@
   }
 
   function openJob(i) {
-    const job = allJobs()[i];
+    const job = cachedJobs[i];
     document.getElementById('detail-photo').src = job.photo || '';
     document.getElementById('detail-photo').style.display = job.photo ? 'block' : 'none';
     document.getElementById('detail-desc').textContent = job.desc;
@@ -947,8 +943,8 @@
     show('screen-job-detail');
   }
 
-  // ── submit a new job from the form ──
-  function submitJob() {
+  // ── submit a new job ──
+  async function submitJob() {
     const desc    = document.getElementById('post-desc').value.trim();
     const pickup  = document.getElementById('pickup-city').value;
     const dropoff = document.getElementById('dropoff-city').value;
@@ -962,32 +958,49 @@
     if (!when)  { alert('Please select when you need help — Today, Tomorrow, or This Weekend.'); return; }
     if (!phone) { alert('Please add your phone number.'); return; }
 
-    const job = {
-      id: Date.now(),
-      desc, pickup, dropoff, phone,
-      miles: currentMiles || 0,
-      price: currentPrice,
-      when,
-      photo: photo.startsWith('data:') ? photo : ''
-    };
+    const btn = document.querySelector('#screen-post-3 .btn-primary');
+    btn.textContent = 'POSTING...'; btn.disabled = true;
 
-    const saved = loadSavedJobs();
-    saved.push(job);
-    localStorage.setItem('nwatruck_jobs', JSON.stringify(saved));
-    window._lastPostedJob = job;
+    try {
+      const job = {
+        id: Date.now(),
+        desc, pickup, dropoff, phone,
+        miles: currentMiles || 0,
+        price: currentPrice,
+        when,
+        photo
+      };
 
-    // ── fire ntfy notification to all helpers ──
-    fetch('https://ntfy.sh/nwatruck', {
-      method: 'POST',
-      headers: {
-        'Title': 'New NWA Truck Job',
-        'Priority': 'high',
-        'Tags': 'truck'
-      },
-      body: `${job.desc} — ${job.miles} mi — $${job.price} — ${job.when}`
-    }).catch(() => {}); // fail silently if offline
+      const jobs = await loadJobs();
+      jobs.push(job);
+      await saveJobs(jobs);
+      window._lastPostedJob = job;
 
-    show('screen-post-confirm');
+      // ── fire ntfy notification ──
+      fetch('https://ntfy.sh/nwatruck', {
+        method: 'POST',
+        headers: { 'Title': 'New NWA Truck Job', 'Priority': 'high' },
+        body: `${job.desc} — ${job.miles} mi — $${job.price} — ${job.when}`
+      }).catch(() => {});
+
+      show('screen-post-confirm');
+    } catch(e) {
+      alert('Something went wrong posting your job. Please check your connection and try again.');
+    } finally {
+      btn.textContent = 'POST IT'; btn.disabled = false;
+    }
+  }
+
+  // ── claim a job ──
+  async function claimJob() {
+    const job = window._currentJob;
+    if (job) {
+      const jobs = await loadJobs();
+      const filtered = jobs.filter(j => j.id !== job.id);
+      await saveJobs(filtered);
+    }
+    window._claimedJob = job;
+    show('screen-claimed');
   }
 
   renderJobs();
@@ -1014,10 +1027,21 @@
     if (!file) return;
     const reader = new FileReader();
     reader.onload = ev => {
-      const preview = document.getElementById('photo-preview');
-      preview.src = ev.target.result;
-      preview.style.display = 'block';
-      document.querySelector('.photo-upload').style.display = 'none';
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxWidth = 400;
+        const scale = Math.min(1, maxWidth / img.width);
+        canvas.width  = Math.round(img.width  * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        const compressed = canvas.toDataURL('image/jpeg', 0.5);
+        const preview = document.getElementById('photo-preview');
+        preview.src = compressed;
+        preview.style.display = 'block';
+        document.querySelector('.photo-upload').style.display = 'none';
+      };
+      img.src = ev.target.result;
     };
     reader.readAsDataURL(file);
   }
@@ -1055,26 +1079,12 @@
     selectedWhen = value;
   }
 
-  function claimJob() {
-    const job = window._currentJob;
-    if (job) {
-      const saved = loadSavedJobs().filter(j => {
-        if (job.id && j.id) return j.id !== job.id;
-        // fallback: match by description + pickup for old jobs without id
-        return !(j.desc === job.desc && j.pickup === job.pickup);
-      });
-      localStorage.setItem('nwatruck_jobs', JSON.stringify(saved));
-    }
-    window._claimedJob = job;
-    show('screen-claimed');
-  }
-
-  function repostJob() {
+  async function repostJob() {
     if (window._lastPostedJob) {
       const job = { ...window._lastPostedJob, id: Date.now() };
-      const saved = loadSavedJobs();
-      saved.push(job);
-      localStorage.setItem('nwatruck_jobs', JSON.stringify(saved));
+      const jobs = await loadJobs();
+      jobs.push(job);
+      await saveJobs(jobs);
     }
     show('screen-post-confirm');
   }
@@ -1085,8 +1095,10 @@
     if (!p || !d) return;
     const miles = haversine(CITIES[p], CITIES[d]);
     currentMiles = miles;
-    document.getElementById('miles-text').textContent = miles + ' miles';
+    const sameCity = p === d;
+    document.getElementById('miles-text').textContent = sameCity ? 'Same city' : miles + ' miles';
     document.getElementById('miles-badge').classList.add('calculated');
+    document.getElementById('same-city-note').style.display = sameCity ? 'block' : 'none';
   }
 
   function goToPrice() {
